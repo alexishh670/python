@@ -1,20 +1,28 @@
 import sys
+import csv
+import os
+
+CLIENT_TABLE = 'clients.csv'
+CLIENT_SCHEMA = ['name', 'company', 'email', 'position']
+
+clients = []
+
+def _initialize_clients_from_storage():
+    with open(CLIENT_TABLE, mode='r') as f:
+        reader = csv.DictReader(f, fieldnames=CLIENT_SCHEMA)
+
+        for row in reader:
+            clients.append(row)
 
 
-clients = [
-    {
-        'name': 'Pablo',
-        'company': 'Google',
-        'email': 'pablo@google.com',
-        'position': 'Software Engineer',
-    },
-    {
-        'name': 'Ricardo',
-        'company': 'Facebook',
-        'email': 'ricardo@facebook.com',
-        'position': 'Data Engineer',
-    },
-]
+def _save_clients_to_storage():
+    tmp_table_name = '{}.tmp'.format(CLIENT_TABLE)
+    with open(tmp_table_name, mode='w') as f:
+        writer = csv.DictWriter(f, fieldnames=CLIENT_SCHEMA)
+        writer.writerows(clients)
+
+        os.remove(CLIENT_TABLE)
+        os.rename(tmp_table_name, CLIENT_TABLE)
 
 
 def create_client(client):
@@ -97,6 +105,8 @@ def _print_welcome():
 
 
 if __name__ == '__main__':
+   
+    _initialize_clients_from_storage()
     _print_welcome()
 
     command = input()
@@ -130,3 +140,5 @@ if __name__ == '__main__':
             print('The client: {} is not in our client\'s list'.format(client_name))
     else:
         print('Invalid command')
+
+    _save_clients_to_storage()
