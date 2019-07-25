@@ -3,7 +3,7 @@ import csv
 import os
 
 CLIENT_TABLE = '.clients.csv'
-CLIENT_SCHEMA = ['name', 'company', 'email', 'position']
+CLIENT_SCHEMA = ['name', 'company', 'email', 'position'] #lista de llaves que utilizara csv para construir diccionarios
 
 clients = []
 
@@ -16,13 +16,14 @@ def _initialize_clients_from_storage():
 
 
 def _save_clients_to_storage():
-    tmp_table_name = '{}.tmp'.format(CLIENT_TABLE)
+    tmp_table_name = '{}'.format(CLIENT_TABLE)
     with open(tmp_table_name, mode='w') as f:
         writer = csv.DictWriter(f, fieldnames=CLIENT_SCHEMA)
         writer.writerows(clients)
 
         os.remove(CLIENT_TABLE)
-        os.rename(tmp_table_name, CLIENT_TABLE)
+        
+    os.rename(tmp_table_name, CLIENT_TABLE)
 
 
 def create_client(client):
